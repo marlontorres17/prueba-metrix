@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/prueba_metrix
+    username: root  
+    password: 1717 
+    driver-class-name: com.mysql.cj.jdbc.Driver  
+  jpa:
+    hibernate:
+      ddl-auto: update 
+    show-sql: true  
+    properties:
+      hibernate:
+        hibernate.dialect: org.hibernate.dialect.MySQLDialect 
