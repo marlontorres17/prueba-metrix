@@ -3,6 +3,8 @@ package com.metrix.contacto.contacto.application.services;
 
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDate;
+
 import org.springframework.stereotype.Service;
 
 import com.metrix.contacto.contacto.application.interfaces.IContactService;
@@ -18,5 +20,9 @@ public class ContactService implements IContactService {
     @Override
     public void save(ContactEntity entity) {
         contactRepository.save(entity);
+    }
+
+    public long countContactsForToday() {
+        return contactRepository.countContactsByDate(LocalDate.now());
     }
 }
