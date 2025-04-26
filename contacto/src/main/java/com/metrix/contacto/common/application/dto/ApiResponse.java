@@ -9,7 +9,7 @@ public class ApiResponse<T> {
     private final int code;
     private final String message;
     private final T data;
-    private final String errorCode; // ✅ nuevo campo opcional
+    private final String errorCode; 
 
     public static <T> ApiResponse<T> success(T data, String message, int code) {
         return new ApiResponse<>(code, message, data, null);

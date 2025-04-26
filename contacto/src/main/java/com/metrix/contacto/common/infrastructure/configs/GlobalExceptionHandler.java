@@ -1,6 +1,8 @@
 package com.metrix.contacto.common.infrastructure.configs;
 
 import com.metrix.contacto.common.application.dto.ApiResponse;
+import com.metrix.contacto.common.infrastructure.enums.ApiErrorCode;
+import com.metrix.contacto.common.infrastructure.exceptions.NotFoundException;
 import com.metrix.contacto.common.infrastructure.exceptions.ValidationError;
 
 import org.springframework.http.HttpStatus;
@@ -27,7 +29,20 @@ public class GlobalExceptionHandler {
                     errors,
                     "Validación fallida: Hay campos con errores.",
                     HttpStatus.BAD_REQUEST.value(),
-                    "VALIDATION_ERROR"
+                    ApiErrorCode.VALIDATION_ERROR.getCode()
+                ));
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleDataNotFoundException(NotFoundException ex) {
+        // Si necesitas un cuerpo con detalles adicionales, como un objeto de error, lo puedes incluir aquí
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error(
+                        ex.getMessage(),
+                        "No se encontraron registros para el rango de fechas solicitado",
+                        HttpStatus.NOT_FOUND.value(),
+                        ApiErrorCode.NOT_FOUND.getCode()
                 ));
     }
 }

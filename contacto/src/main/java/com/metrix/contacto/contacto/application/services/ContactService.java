@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.metrix.contacto.common.infrastructure.exceptions.NotFoundException;
 import com.metrix.contacto.contacto.application.interfaces.IContactService;
 import com.metrix.contacto.contacto.application.proyections.CountryCount;
 import com.metrix.contacto.contacto.domain.entity.ContactEntity;
@@ -39,12 +40,17 @@ public class ContactService implements IContactService {
                 .collect(Collectors.toMap(CountryCount::getCountry, CountryCount::getCount));
     }
 
-    
+    @Override
+    public long countContactsByDateRange(LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
+        long count = contactRepository.countContactsBetweenDates(startDateTime, endDateTime);
 
-public long countContactsByDateRange(LocalDate startDate, LocalDate endDate) {
-    LocalDateTime startDateTime = startDate.atStartOfDay();
-    LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
-    return contactRepository.countContactsBetweenDates(startDateTime, endDateTime);
-}
+        if (count == 0) {
+            throw new NotFoundException("No se encontraron registros en el rango de fechas indicado", "NOT_FOUND");
+        }
+
+        return count;
+    }
 
 }
