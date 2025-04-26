@@ -81,10 +81,6 @@ mvn clean install
 
 ---
 
-Para incluir la parte de cómo correr la aplicación con Docker y mantener también la opción local, puedes modificar el archivo `README.md` de la siguiente forma:
-
----
-
 ## Cómo ejecutar la aplicación
 
 ### Opción 1: Ejecutar localmente
