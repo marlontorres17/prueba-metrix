@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1717
+      MYSQL_DATABASE: prueba_metrix
+    ports:
+      - "3307:3306"  
+    volumes:
+      - mysql_data:/var/lib/mysql 
+
+  backend:
+    build: .  
+    container_name: springboot_backend
+    restart: always
+    ports:
+      - "8081:8080"  
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/prueba_metrix
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1717
+      SPRING_DATASOURCE_DRIVER-CLASS-NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL-AUTO: update
+      SPRING_MAIL_HOST: smtp.gmail.com
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_USERNAME: marlontorresmedina@gmail.com
+      SPRING_MAIL_PASSWORD: jdte cyxr tzxe mbpp  
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: true
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: true
+      CONTACT_ADMIN-EMAIL: recooffee@gmail.com
+    depends_on:
+      - mysql 
+
+volumes:
+  mysql_data:  
