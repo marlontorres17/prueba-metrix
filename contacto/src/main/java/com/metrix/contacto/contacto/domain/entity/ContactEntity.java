@@ -30,7 +30,7 @@ public class ContactEntity {
     @Column(length = 20)
     private String phone;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "TEXT", length = 500)
     private String message;
 
     @Column(nullable = false)

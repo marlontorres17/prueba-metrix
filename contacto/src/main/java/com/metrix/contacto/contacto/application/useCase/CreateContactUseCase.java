@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.metrix.contacto.common.infrastructure.enums.CountryPhonePrefix;
 import com.metrix.contacto.contacto.application.command.CreateContactCommand;
 import com.metrix.contacto.contacto.application.interfaces.IContactService;
 import com.metrix.contacto.contacto.application.interfaces.IEmailService;
@@ -49,11 +50,15 @@ public class CreateContactUseCase {
      */
     @Transactional
     public void execute(@Valid CreateContactCommand command) {
+        String prefix = CountryPhonePrefix.findPrefixByCountry(command.getCountry());
+
+        String formattedPhone = (prefix != null) ? prefix + command.getPhone() : command.getPhone();
+
         ContactEntity entity = ContactEntity.builder()
                 .fullName(command.getFullName())
                 .email(command.getEmail())
                 .country(command.getCountry())
-                .phone(command.getPhone())
+                .phone(formattedPhone)
                 .message(command.getMessage())
                 .createdAt(LocalDateTime.now())
                 .build();
@@ -66,10 +71,11 @@ public class CreateContactUseCase {
                 + ",\n\nHemos recibido tu mensaje. Pronto nos pondremos en contacto contigo.\n\nSaludos,\nConsultores Estratégicos Ltda.";
         emailService.sendEmail(entity.getEmail(), userSubject, userBody);
 
-        // Email al admin
+        // Email al administrador
         String adminSubject = "Nuevo contacto recibido";
         String adminBody = "Se ha recibido un nuevo mensaje de " + entity.getFullName() + " (" + entity.getEmail()
                 + ").\n\nMensaje:\n" + entity.getMessage();
         emailService.sendEmail(adminEmail, adminSubject, adminBody);
     }
+
 }
