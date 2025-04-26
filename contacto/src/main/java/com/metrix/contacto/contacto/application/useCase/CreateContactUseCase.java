@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.metrix.contacto.common.infrastructure.enums.CountryPhonePrefix;
+import com.metrix.contacto.common.infrastructure.loaders.CountryPhonePrefixLoader;
 import com.metrix.contacto.contacto.application.command.CreateContactCommand;
 import com.metrix.contacto.contacto.application.interfaces.IContactService;
 import com.metrix.contacto.contacto.application.interfaces.IEmailService;
@@ -21,6 +21,7 @@ public class CreateContactUseCase {
 
     private final IContactService contactService;
     private final IEmailService emailService;
+    private final CountryPhonePrefixLoader prefixLoader;
 
     @Value("${contact.admin-email}")
     private String adminEmail;
@@ -50,8 +51,7 @@ public class CreateContactUseCase {
      */
     @Transactional
     public void execute(@Valid CreateContactCommand command) {
-        String prefix = CountryPhonePrefix.findPrefixByCountry(command.getCountry());
-
+        String prefix = prefixLoader.findPrefixByCountry(command.getCountry());
         String formattedPhone = (prefix != null) ? prefix + command.getPhone() : command.getPhone();
 
         ContactEntity entity = ContactEntity.builder()
