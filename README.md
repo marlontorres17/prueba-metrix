@@ -81,19 +81,54 @@ mvn clean install
 
 ---
 
+Para incluir la parte de cómo correr la aplicación con Docker y mantener también la opción local, puedes modificar el archivo `README.md` de la siguiente forma:
+
+---
+
 ## Cómo ejecutar la aplicación
 
-Para levantar la API localmente:
+### Opción 1: Ejecutar localmente
+
+Si prefieres ejecutar la aplicación de manera local, puedes usar Maven. Solo ejecuta el siguiente comando:
 
 ```bash
 mvn spring-boot:run
 ```
 
-Una vez corriendo, estará disponible en:
+Una vez corriendo, la API estará disponible en:
 
 ```
 http://localhost:8080
 ```
+
+### Opción 2: Ejecutar con Docker
+
+Si deseas ejecutar la aplicación usando Docker, sigue estos pasos:
+
+1. **Asegúrate de tener Docker.**
+
+2. **Construye las imágenes de Docker**:
+
+   ```bash
+   docker-compose build
+   ```
+
+3. **Levanta los contenedores de Docker**:
+
+   ```bash
+   docker-compose up
+   ```
+
+Esto iniciará tanto el contenedor de MySQL como el de la aplicación de Spring Boot.
+
+4. **La API estará disponible en:**
+
+   ```
+   http://localhost:8081
+   ```
+
+   - El contenedor de MySQL estará corriendo en el puerto `3307`.
+   - La aplicación Spring Boot estará disponible en el puerto `8081` por defecto, como está configurado en el `docker-compose.yml`.
 
 ---
 
@@ -151,7 +186,7 @@ Respuesta esperada:
 Puedes acceder a la documentación completa de la API (incluye descripciones, y pruebas) aquí:
 
 ```
-http://localhost:8080/swagger-ui/index.html
+http://localhost:8081/swagger-ui/index.html
 ```
 
 ---
