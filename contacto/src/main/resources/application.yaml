@@ -23,6 +23,9 @@ spring:
           auth: true
           starttls:
             enable: true
+  
+  jackson:
+    property-naming-strategy: SNAKE_CASE
 
 contact:
   admin-email: recooffee@gmail.com
