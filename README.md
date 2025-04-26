@@ -159,6 +159,8 @@ Respuesta esperada:
 }
 ```
 
+---
+
 ### Consultar envíos del día actual
 
 ```
@@ -171,6 +173,46 @@ Respuesta esperada:
   "code": 200,
   "message": "Consulta de formularios diarios exitosa",
   "data": 8,
+  "error_code": null
+}
+```
+
+---
+
+### Consultar formularios enviados por país
+
+```
+GET /api/metrics/submissions-by-country
+```
+
+Respuesta esperada:
+```json
+{
+  "code": 200,
+  "message": "Consulta de formularios por país exitosa",
+  "data": {
+    "Colombia": 5,
+    "México": 3,
+    "Perú": 2
+  },
+  "error_code": null
+}
+```
+
+---
+
+### Consultar formularios enviados en un rango de fechas
+
+```
+GET /api/metrics/submissions-by-date-range?start=2025-04-25&end=2025-04-26
+```
+
+Respuesta esperada:
+```json
+{
+  "code": 200,
+  "message": "Consulta de formularios por rango de fechas exitosa",
+  "data": 15,
   "error_code": null
 }
 ```
@@ -267,6 +309,8 @@ Para mejorar el diseño de este endpoint y permitir la consulta de métricas por
 |--------|-----------------------------------|--------------------------------------------|
 | POST   | /api/contact-submissions          | Envía el formulario de contacto             |
 | GET    | /api/metrics/daily-submissions    | Consulta cuántos formularios se enviaron hoy |
+| GET    | /api/metrics/submissions-by-country | Consulta la cantidad de formularios enviados por país |
+| GET    | /api/metrics/submissions-by-date-range | Consulta la cantidad de formularios enviados en un rango de fechas |
 
 ---
 
