@@ -2,6 +2,11 @@ package com.metrix.contacto.contacto.infrastructure.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.time.LocalDate;
+import java.util.Map;
+
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,9 +15,10 @@ import com.metrix.contacto.common.infrastructure.codes.ApiCode;
 import com.metrix.contacto.contacto.application.command.CreateContactCommand;
 import com.metrix.contacto.contacto.application.useCase.CreateContactUseCase;
 import com.metrix.contacto.contacto.application.useCase.GetDailySubmissionsUseCase;
+import com.metrix.contacto.contacto.application.useCase.GetSubmissionsByCountryUseCase;
+import com.metrix.contacto.contacto.application.useCase.GetSubmissionsByDateRangeUseCase;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @RestController
 @RequestMapping
@@ -21,6 +27,8 @@ public class ContactController {
 
     private final CreateContactUseCase createContactUseCase;
     private final GetDailySubmissionsUseCase getDailySubmissionsUseCase;
+    private final GetSubmissionsByCountryUseCase getSubmissionsByCountryUseCase;
+    private final GetSubmissionsByDateRangeUseCase getSubmissionsByDateRangeUseCase;
 
     @Operation(
     summary = "Envía el formulario de contacto",
@@ -74,5 +82,60 @@ public class ContactController {
                 .body(ApiResponse.success(dailySubmissions, "Consulta de formularios diarios exitosa",
                         ApiCode.OK.getCode()));
     }
+
+    @Operation(summary = "Consulta de formularios enviados por país", description = """
+            Devuelve un listado con la cantidad de formularios de contacto enviados agrupados por país.
+
+            **Escenario de uso:**
+            Un administrador desea visualizar desde qué países los usuarios han intentado comunicarse.
+
+            **Proceso:**
+            - Agrupa los envíos de formularios según el país de origen.
+            - Devuelve un mapa donde la clave es el nombre del país y el valor es el número de formularios enviados.
+
+            **Respuesta esperada:**
+            - `200 OK`: Mapa de países con la cantidad de formularios enviados.
+            - `500 Internal Server Error`: Fallo al obtener la información desde la base de datos.
+            """)
+    @GetMapping("/api/metrics/submissions-by-country")
+    public ResponseEntity<ApiResponse<Map<String, Long>>> getSubmissionsByCountry() {
+        Map<String, Long> result = getSubmissionsByCountryUseCase.execute();
+        return ResponseEntity
+                .status(ApiCode.OK.getHttpStatus())
+                .body(ApiResponse.success(result, "Consulta de formularios por país exitosa",
+                        ApiCode.OK.getCode()));
+    }
+
+    @Operation(summary = "Consulta de formularios enviados en un rango de fechas", description = """
+            Devuelve la cantidad de formularios de contacto enviados entre dos fechas específicas.
+
+            **Formato de fechas esperado:**
+            - `start`: Fecha de inicio en formato `yyyy-MM-dd` (ejemplo: 2025-04-25)
+            - `end`: Fecha de fin en formato `yyyy-MM-dd` (ejemplo: 2025-04-26)
+
+            **Escenario de uso:**
+            Un administrador desea conocer cuántos formularios fueron enviados en un período determinado.
+
+            **Proceso:**
+            - Filtra los envíos de formularios entre la fecha de inicio y la fecha de fin, ambas inclusive.
+            - Devuelve el total de formularios enviados en ese rango.
+
+            **Respuesta esperada:**
+            - `200 OK`: Número total de formularios enviados en el rango indicado.
+            - `400 Bad Request`: Formato incorrecto de fechas o parámetros faltantes.
+            - `500 Internal Server Error`: Fallo al obtener la información desde la base de datos.
+            """)
+    @GetMapping("/api/metrics/submissions-by-date-range")
+    public ResponseEntity<ApiResponse<Long>> getSubmissionsByDateRange(
+            @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+            @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
+
+        long result = getSubmissionsByDateRangeUseCase.execute(start, end);
+        return ResponseEntity
+                .status(ApiCode.OK.getHttpStatus())
+                .body(ApiResponse.success(result, "Consulta de formularios por rango de fechas exitosa",
+                        ApiCode.OK.getCode()));
+    }
+
 
 }
